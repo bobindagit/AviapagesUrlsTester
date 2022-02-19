@@ -1,8 +1,7 @@
 import csv
-import time
 import requests
 import logging
-from alive_progress import alive_bar, alive_it
+from alive_progress import alive_it
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
@@ -13,6 +12,7 @@ def parse_sitemap(sitemap_link: str) -> set:
 
     logger = logging.getLogger('PARSER')
 
+    # Links list
     links = set()
 
     fake_user = UserAgent(verify_ssl=False)
@@ -34,9 +34,6 @@ def parse_sitemap(sitemap_link: str) -> set:
     for link_tag in alive_it(link_tags):
         links.add(link_tag.text)
 
-    # For logger messages
-    time.sleep(.005)
-
     return links
 
 
@@ -56,37 +53,33 @@ def run_test(links: set, retries_count: int) -> None:
 
         logger.info('Start of testing')
         # ROWS
-        with alive_bar(len(links)) as bar:
-            for link in links:
+        for link in alive_it(links):
 
-                status_code = 0
-                elapsed_time = 0
+            status_code = 0
+            elapsed_time = 0
 
-                # Link
-                row = [link]
+            # Link
+            row = [link]
 
-                for i in range(1, retries_count + 1):
-                    link_info = test_link_connection(link)
-                    # Elapsed time
-                    row.append(link_info.get('elapsed_time'))
+            for i in range(1, retries_count + 1):
+                link_info = test_link_connection(link)
+                # Elapsed time
+                row.append(link_info.get('elapsed_time'))
 
-                    elapsed_time += link_info.get('elapsed_time')
+                elapsed_time += link_info.get('elapsed_time')
 
-                    response_code = link_info.get('response')
-                    if status_code == 0 or response_code != 200:
-                        status_code = response_code
+                response_code = link_info.get('response')
+                if status_code == 0 or response_code != 200:
+                    status_code = response_code
 
-                # Average elapsed time
-                row.append(elapsed_time / retries_count)
+            # Average elapsed time
+            row.append(elapsed_time / retries_count)
 
-                # Response code
-                row.append(status_code)
+            # Response code
+            row.append(status_code)
 
-                writer.writerow(row)
+            writer.writerow(row)
 
-                bar()
-
-    time.sleep(.005)
     logger.info('Created file report.csv')
 
 

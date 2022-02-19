@@ -2,3 +2,4 @@ requests==2.27.1
 beautifulsoup4==4.10.0
 fake_useragent==0.1.11
 alive_progress==2.3.1
+lxml==4.8.0
