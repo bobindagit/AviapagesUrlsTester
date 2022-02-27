@@ -22,4 +22,7 @@
 > section services -> python_app -> volumes
 > 
 > /Users/vladimirmelnic/reports/ - reports folder
-4. Run script run_main.sh or run_buzz.sh for test each sitemap link or buzz detail
+4. Run script
+> run_main.sh - test main sitemap urls
+> 
+> run_buzz.sh - test buzz urls, analyze titles and article bodies words
