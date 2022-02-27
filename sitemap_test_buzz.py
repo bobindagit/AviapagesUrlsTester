@@ -16,12 +16,12 @@ def main():
     all_links = parser.get_sitemap_links(SITEMAP_PATH)
 
     # Running tests
-    # parser.run_test(all_links,
-    #                 int(os.environ.get('RETRIES_COUNT')),
-    #                 True)
+    parser.run_test(all_links,
+                    int(os.environ.get('RETRIES_COUNT')),
+                    True)
 
     # Running SEO analyze
-    if os.environ.get('ANALYZE_SEO_BUZZ') == 1:
+    if int(os.environ.get('ANALYZE_SEO_BUZZ')) == 1:
         analyzer.analyze(all_links)
 
 
