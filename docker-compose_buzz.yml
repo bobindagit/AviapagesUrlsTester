@@ -1,0 +1,23 @@
+version: '3'
+services:
+  python_app:
+    volumes:
+      - /Users/vladimirmelnic/reports/:/temp
+    env_file:
+      - ./env.dev
+    network_mode: host
+    build:
+      context: .
+      dockerfile: Dockerfile_buzz
+    depends_on:
+      - redis
+    command:
+      python sitemap_test_buzz.py
+  redis:
+    network_mode: host
+    image: redis:latest
+    restart: always
+    expose:
+      - '6379'
+    ports:
+      - '6379:6379'

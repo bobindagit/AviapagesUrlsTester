@@ -9,7 +9,4 @@ RUN pip install --no-cache-dir -r /working/sitemap_tester/requirements.txt
 
 COPY . /working/sitemap_tester
 
-ENV SITEMAP_LINK="https://aviapages.com/sitemap.xml"
-ENV RETRIES_COUNT=3
-
-CMD ["python", "-u", "main.py"]
+CMD ["python", "-u", "sitemap_test_main.py"]
