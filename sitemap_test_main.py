@@ -26,14 +26,14 @@ def main():
 def download_main_sitemap() -> None:
 
     logger = logging.getLogger('DOWNLOADER')
-    logger.info('Downloading SITEMAP file...')
+    logger.info('Downloading sitemap file...')
 
     headers = parser.generate_headers()
     request = requests.get(MAIN_SITEMAP_URL, headers=headers)
     with open(SITEMAP_PATH, 'w') as file:
         file.write(request.text)
 
-    logger.info(f'Sitemap file created at {SITEMAP_PATH}')
+    logger.info(f'Sitemap file downloaded at {SITEMAP_PATH}')
 
 
 if __name__ == '__main__':

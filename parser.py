@@ -34,7 +34,7 @@ class Parser:
     def run_test(self) -> None:
 
         logger = logging.getLogger('TESTER')
-        logger.info('Start of testing...')
+        logger.info('Testing site urls...')
 
         # HEADERS
         with open(self.filename, 'w', encoding='UTF8') as file:
@@ -162,7 +162,7 @@ def generate_headers() -> dict:
 def get_sitemap_links(sitemap_path: str) -> set:
 
     logger = logging.getLogger('LINKS PARSER')
-    logger.info('Reading SITEMAP file...')
+    logger.info('Reading sitemap file...')
 
     links = set()
     with open(sitemap_path, 'r') as file:

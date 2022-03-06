@@ -1,14 +1,11 @@
 import os
 from pathlib import Path
-import logging
 
 from parser import Parser
 from analyzer import Analyzer
 
 BASE_DIR = Path(__file__).resolve().parent
 SITEMAP_PATH = f'{BASE_DIR}/sitemaps/buzz_sitemap.xml'
-
-logging.basicConfig(level=logging.INFO)
 
 
 def main():
