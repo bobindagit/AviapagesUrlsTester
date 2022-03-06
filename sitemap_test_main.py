@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
-import requests
 import logging
+import requests
+
 import parser
+from parser import Parser
 
 BASE_DIR = Path(__file__).resolve().parent
 SITEMAP_PATH = f'{BASE_DIR}/sitemaps/main_sitemap.xml'
@@ -16,13 +18,9 @@ def main():
     # Download main sitemap
     download_main_sitemap()
 
-    # Getting all links from the sitemap
-    all_links = parser.get_sitemap_links(SITEMAP_PATH)
-
     # Running tests
-    parser.run_test(all_links,
-                    int(os.environ.get('RETRIES_COUNT')),
-                    False)
+    tester = Parser(SITEMAP_PATH, int(os.environ.get('RETRIES_COUNT')), False)
+    tester.run_test()
 
 
 def download_main_sitemap() -> None:

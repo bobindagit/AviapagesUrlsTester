@@ -2,7 +2,7 @@ version: '3'
 services:
   python_app:
     volumes:
-      - /Users/vladimirmelnic/reports/:/temp
+      - /Users/vladimirmelnic/reports/:/working/sitemap_tester/reports
     env_file:
       - ./env.dev
     network_mode: host
