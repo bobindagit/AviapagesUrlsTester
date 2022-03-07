@@ -104,9 +104,9 @@ class Analyzer:
             title = soup.find('h1', class_='thread_text ap_fs_24')
             if title:
                 title_text = title.text.strip().upper()
-            word_list = self.get_words_list(title_text)
-            for word in word_list:
-                await redis.zincrby('headers', 1, word)
+                word_list = self.get_words_list(title_text)
+                for word in word_list:
+                    await redis.zincrby('headers', 1, word)
 
             # ARTICLE BODY
             article_body = ''
