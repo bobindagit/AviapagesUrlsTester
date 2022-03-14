@@ -22,6 +22,8 @@
 > MIN_WORDS_COUNT - minimum pass gate number of words for report
 >
 > ANALYZE_SEO_BUZZ - 1 or 0 - additional SEO analyze for buzz links
+> 
+> NUM_CORES - cpu cores count
 3. Change local path to reports folder in docker-compose_buzz.yml
 > section services -> python_app -> volumes
 > 
