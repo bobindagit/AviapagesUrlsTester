@@ -118,7 +118,8 @@ class Analyzer:
             for word in word_list:
                 await redis.zincrby('article_bodies', 1, word)
 
-    def get_words_list(self, text: str) -> list:
+    @staticmethod
+    def get_words_list(text: str) -> list:
         # Punctuation remover
         tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+')
 

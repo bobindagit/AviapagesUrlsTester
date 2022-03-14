@@ -6,7 +6,6 @@ from pathlib import Path
 
 import asyncio
 import aiohttp
-import multiprocessing
 import concurrent.futures
 
 from alive_progress import alive_it, alive_bar
@@ -16,7 +15,7 @@ from bs4 import BeautifulSoup
 BASE_URL = 'http://aviapages.com'
 BASE_DIR = Path(__file__).resolve().parent
 
-NUM_CORES = multiprocessing.cpu_count()
+NUM_CORES = os.environ.get('NUM_CORES')
 
 logging.basicConfig(level=logging.INFO)
 
@@ -134,7 +133,8 @@ class Parser:
                 'image_size': image_size
             }
 
-    async def get_image_size(self, session, link_content: str) -> str:
+    @staticmethod
+    async def get_image_size(session, link_content: str) -> str:
 
         soup = BeautifulSoup(link_content, features='lxml-xml')
         image = soup.find('img', class_='thread_image')
