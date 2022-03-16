@@ -3,7 +3,7 @@ from analyzer import Analyzer
 import parser
 
 
-class QueryTest(unittest.TestCase):
+class AnalyzerTest(unittest.TestCase):
     def test_get_word_list(self):
         text = 'UUWW - EVRA 2Pax Challenger 300'
         answer = ['UUWW', 'EVRA', '2Pax', 'Challenger']

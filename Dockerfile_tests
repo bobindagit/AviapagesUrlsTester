@@ -1,0 +1,13 @@
+FROM python:3.10.0
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /working/sitemap_tester
+
+COPY requirements.txt /working/sitemap_tester/
+RUN pip install --no-cache-dir -r /working/sitemap_tester/requirements.txt
+
+COPY . /working/sitemap_tester
+
+CMD ["python", "-u", "-m", "tests.analyzer_test"]
+CMD ["python", "-u", "-m", "tests.parser_test"]

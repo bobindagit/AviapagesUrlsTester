@@ -1,8 +1,11 @@
-from unittest import TestCase, main
+import unittest
+from analyzer import Analyzer
+import parser
 
 
-class ParserTest(TestCase):
+class ParserTest(unittest.TestCase):
     pass
 
+
 if __name__ == '__main__':
-    main()
+    unittest.main()
