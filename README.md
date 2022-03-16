@@ -16,7 +16,7 @@
 
 # HOW TO USE
 1. First you need to install Docker and Docker-compose to deploy application.
-2. Set up ENV variables in the env.dev file.
+2. Set up ENV variables in the var.env file.
 > RETRIES_COUNT - urls check count
 > 
 > MIN_WORDS_COUNT - minimum pass gate number of words for report
@@ -24,10 +24,8 @@
 > ANALYZE_SEO_BUZZ - 1 or 0 - additional SEO analyze for buzz links
 > 
 > NUM_CORES - cpu cores count
-3. Change local path to reports folder in docker-compose_buzz.yml
-> section services -> python_app -> volumes
 > 
-> /Users/vladimirmelnic/reports/ - reports folder
+> LOCAL_PATH - local path for saving reports
 4. Run script
 > run_main.sh - test main sitemap urls
 > 

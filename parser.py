@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 BASE_URL = 'http://aviapages.com'
 BASE_DIR = Path(__file__).resolve().parent
 
-NUM_CORES = os.environ.get('NUM_CORES')
+NUM_CORES = int(os.environ.get('NUM_CORES'))
 
 logging.basicConfig(level=logging.INFO)
 

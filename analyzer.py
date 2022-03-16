@@ -163,6 +163,6 @@ def download_nltk_data() -> None:
     else:
         ssl._create_default_https_context = _create_unverified_https_context
 
-    nltk_data = ['punkt', 'wordnet', 'omw-1.4', 'stopwords']
+    nltk_data = ('punkt', 'wordnet', 'omw-1.4', 'stopwords')
     for name in alive_it(nltk_data):
         nltk.download(name, quiet=True)
