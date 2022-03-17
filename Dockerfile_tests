@@ -9,5 +9,4 @@ RUN pip install --no-cache-dir -r /working/sitemap_tester/requirements.txt
 
 COPY . /working/sitemap_tester
 
-CMD ["python", "-u", "-m", "tests.analyzer_test"]
-CMD ["python", "-u", "-m", "tests.parser_test"]
+CMD ["python", "-u", "-m", "unit_tests.analyzer_test"]

@@ -1,10 +1,12 @@
 import unittest
 from analyzer import Analyzer
 import parser
+import analyzer
 
 
 class AnalyzerTest(unittest.TestCase):
     def test_get_word_list(self):
+        analyzer.download_nltk_data()
         text = 'UUWW - EVRA 2Pax Challenger 300'
         answer = ['UUWW', 'EVRA', '2Pax', 'Challenger']
         self.assertEqual(Analyzer.get_words_list(text), answer)
