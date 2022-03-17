@@ -30,3 +30,5 @@
 > run_main.sh - test main sitemap urls
 > 
 > run_buzz.sh - test buzz urls, analyze titles and article bodies words
+> 
+> run_tests.sh - unit testing
