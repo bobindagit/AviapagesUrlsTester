@@ -1,0 +1,21 @@
+version: '3'
+services:
+  python_app:
+    env_file:
+      - ./var.env
+    network_mode: host
+    build:
+      context: .
+      dockerfile: Dockerfile_tests
+    depends_on:
+      - redis
+    command:
+      python -u -m unit_tests.sitemap_analyzer
+  redis:
+    network_mode: host
+    image: redis:latest
+    restart: always
+    expose:
+      - '6379'
+    ports:
+      - '6379:6379'

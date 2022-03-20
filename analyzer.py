@@ -32,6 +32,8 @@ class Analyzer:
     def analyze(self) -> None:
 
         reports_path = f'{BASE_DIR}/reports'
+        if not os.path.exists(reports_path):
+            os.mkdir(reports_path)
 
         logger = logging.getLogger('SEO ANALYZER')
 
@@ -95,7 +97,8 @@ class Analyzer:
             await redis.save()
             await redis.close()
 
-    async def parse_words(self, session, redis, link: str) -> None:
+    @staticmethod
+    async def parse_words(session, redis, link: str) -> None:
         async with session.get(link) as request:
             request_text = await request.text()
             soup = BeautifulSoup(request_text, features='lxml-xml')
@@ -104,52 +107,53 @@ class Analyzer:
             title = soup.find('h1', class_='thread_text ap_fs_24')
             if title:
                 title_text = title.text.strip().upper()
-                word_list = self.get_words_list(title_text)
+                word_list = get_words_list(title_text)
                 for word in word_list:
                     await redis.zincrby('headers', 1, word)
 
             # ARTICLE BODY
             article_body = ''
-            body_p = soup.find('div', class_='message ap_margin_top_20').findAll('p')
-            for p in body_p:
-                article_body += p.text.strip() + ' '
-            article_body = article_body.strip().upper()
-            word_list = self.get_words_list(article_body)
-            for word in word_list:
-                await redis.zincrby('article_bodies', 1, word)
+            body = soup.find('div', class_='message ap_margin_top_20')
+            if body:
+                for p in body.findAll('p'):
+                    article_body += p.text.strip() + ' '
+                article_body = article_body.strip().upper()
+                word_list = get_words_list(article_body)
+                for word in word_list:
+                    await redis.zincrby('article_bodies', 1, word)
 
-    @staticmethod
-    def get_words_list(text: str) -> list:
-        # Punctuation remover
-        tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+')
 
-        # Removing URLS
-        words = re.sub(r'http\S+', '', text)
+def get_words_list(text: str) -> list:
+    # Punctuation remover
+    tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+')
 
-        # CONTRACTION fix
-        words = contractions.fix(words)
+    # Removing URLS
+    words = re.sub(r'http\S+', '', text)
 
-        # Lemmatizer
-        lemmatizer = nltk.WordNetLemmatizer()
+    # CONTRACTION fix
+    words = contractions.fix(words)
 
-        # Tokenizing text
-        words = tokenizer.tokenize(words)
+    # Lemmatizer
+    lemmatizer = nltk.WordNetLemmatizer()
 
-        # Word list for return
-        word_list = []
+    # Tokenizing text
+    words = tokenizer.tokenize(words)
 
-        # Useless words
-        stop_words = nltk.corpus.stopwords.words('english')
+    # Word list for return
+    word_list = []
 
-        for word in words:
-            if not word.isdigit() and len(word) > 1 and word.lower() not in stop_words:
-                # Lemmatizing verb
-                word = lemmatizer.lemmatize(word)
-                word = lemmatizer.lemmatize(word, pos='v')
+    # Useless words
+    stop_words = nltk.corpus.stopwords.words('english')
 
-                word_list.append(word)
+    for word in words:
+        if not word.isdigit() and len(word) > 1 and word.lower() not in stop_words:
+            # Lemmatizing verb
+            word = lemmatizer.lemmatize(word)
+            word = lemmatizer.lemmatize(word, pos='v')
 
-        return word_list
+            word_list.append(word)
+
+    return word_list
 
 
 def download_nltk_data() -> None:
