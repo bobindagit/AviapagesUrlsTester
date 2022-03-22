@@ -28,6 +28,7 @@ class Analyzer:
     def __init__(self, sitemap_path: str):
         self.sitemap_links = parser.get_sitemap_links(sitemap_path)
         self.min_words_count = os.environ.get('MIN_WORDS_COUNT')
+        self.logger = logging.getLogger('SEO ANALYZER')
 
     def analyze(self) -> None:
 
@@ -35,20 +36,18 @@ class Analyzer:
         if not os.path.exists(reports_path):
             os.mkdir(reports_path)
 
-        logger = logging.getLogger('SEO ANALYZER')
-
         # Service NLTK data
         download_nltk_data()
 
         # Parsing header and body words
-        logger.info('Start of analyzing headers and article bodies...')
+        self.logger.info('Start of analyzing headers and article bodies...')
 
         async_redis = aioredis.from_url(url='redis://localhost', port=6379, db=0, encoding='utf-8',
                                         decode_responses=True)
         asyncio.run(self.parse_links(async_redis))
 
         # Generating reports
-        logger.info('Start of generating reports...')
+        self.logger.info('Start of generating reports...')
 
         redis = Redis.from_url(url='redis://localhost', port=6379, db=0, encoding='utf-8', decode_responses=True)
 
@@ -65,7 +64,7 @@ class Analyzer:
             all_words.reverse()
             for item in all_words:
                 writer.writerow([item[0], int(item[1])])
-        logger.info(f'Report file created at {reports_path}/seo_headers.csv')
+        self.logger.info(f'Report file created at {reports_path}/seo_headers.csv')
 
         # ARTICLE BODY
         with open(f'{reports_path}/seo_bodies.csv', 'w', encoding='UTF8') as file:
@@ -80,7 +79,7 @@ class Analyzer:
             all_words.reverse()
             for item in all_words:
                 writer.writerow([item[0], int(item[1])])
-        logger.info(f'Report file created at {reports_path}/seo_bodies.csv')
+        self.logger.info(f'Report file created at {reports_path}/seo_bodies.csv')
 
         # Clearing DB and cache
         redis.flushall()
@@ -97,30 +96,32 @@ class Analyzer:
             await redis.save()
             await redis.close()
 
-    @staticmethod
-    async def parse_words(session, redis, link: str) -> None:
-        async with session.get(link) as request:
-            request_text = await request.text()
-            soup = BeautifulSoup(request_text, features='lxml-xml')
+    async def parse_words(self, session, redis, link: str) -> None:
+        try:
+            async with session.get(link) as request:
+                request_text = await request.text()
+                soup = BeautifulSoup(request_text, features='lxml-xml')
 
-            # TITLE
-            title = soup.find('h1', class_='thread_text ap_fs_24')
-            if title:
-                title_text = title.text.strip().upper()
-                word_list = get_words_list(title_text)
-                for word in word_list:
-                    await redis.zincrby('headers', 1, word)
+                # TITLE
+                title = soup.find('h1', class_='thread_text ap_fs_24')
+                if title:
+                    title_text = title.text.strip().upper()
+                    word_list = get_words_list(title_text)
+                    for word in word_list:
+                        await redis.zincrby('headers', 1, word)
 
-            # ARTICLE BODY
-            article_body = ''
-            body = soup.find('div', class_='message ap_margin_top_20')
-            if body:
-                for p in body.findAll('p'):
-                    article_body += p.text.strip() + ' '
-                article_body = article_body.strip().upper()
-                word_list = get_words_list(article_body)
-                for word in word_list:
-                    await redis.zincrby('article_bodies', 1, word)
+                # ARTICLE BODY
+                article_body = ''
+                body = soup.find('div', class_='message ap_margin_top_20')
+                if body:
+                    for p in body.findAll('p'):
+                        article_body += p.text.strip() + ' '
+                    article_body = article_body.strip().upper()
+                    word_list = get_words_list(article_body)
+                    for word in word_list:
+                        await redis.zincrby('article_bodies', 1, word)
+        except asyncio.TimeoutError:
+            self.logger.error(f'Timeout error at {link}')
 
 
 def get_words_list(text: str) -> list:
